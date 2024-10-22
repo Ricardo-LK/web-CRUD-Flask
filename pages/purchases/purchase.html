@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floriculture Management</title>
+    <link rel="stylesheet" href="purchase.css" />
+  </head>
+  <body>
+    <a href="/index.html" class="home">Home</a>
+    <h1>Floriculture Management</h1>
+
+    <h2>Manage Purchases</h2>
+    <form id="purchaseForm">
+      <label for="purchasePrice">Preço:</label>
+      <input type="text" id="purchasePrice" name="purchasePrice" required />
+
+      <label for="purchaseMethod">Metodo:</label>
+      <input type="text" id="purchaseMethod" name="purchaseMethod" required />
+
+      <label for="purchaseClient">Cliente:</label>
+      <input type="text" id="purchaseClient" name="purchaseClient" required />
+
+      <label for="purchaseFlower">Flor:</label>
+      <input type="text" id="purchaseFlower" name="purchaseFlower" required />
+
+      <button type="submit">Add purchase</button>
+    </form>
+
+    <h3>purchase List</h3>
+    <ul id="purchaseList"></ul>
+
+    <script src="purchase.js"></script>
+  </body>
+</html>

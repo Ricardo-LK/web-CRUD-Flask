@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floriculture Management</title>
+    <link rel="stylesheet" href="client.css" />
+  </head>
+  <body>
+    <a href="/index.html" class="home">Home</a>
+    <h1>Floricultura</h1>
+
+    <h2>Clients</h2>
+    <form id="clientForm">
+      <label for="clientName">Nome:</label>
+      <input type="text" id="clientName" name="clientName" required />
+      <label for="clientEmail">Email:</label>
+      <input type="email" id="clientEmail" name="clientEmail" required />
+      <button type="submit">Adicionar Cliente</button>
+    </form>
+
+    <h3>Lista de Cliente</h3>
+    <ul id="clientList"></ul>
+
+    <script src="client.js"></script>
+  </body>
+</html>
