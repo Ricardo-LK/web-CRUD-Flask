@@ -12,10 +12,13 @@ document.getElementById('attClientForm').addEventListener('submit', async functi
         return;
     }
 
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/clients/${clientId}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ name, email })
     });
@@ -24,7 +27,6 @@ document.getElementById('attClientForm').addEventListener('submit', async functi
         alert("Cliente atualizado com sucesso");
         document.location = "clients.html";
     } else {
-        console.error("Update failed:", errorMessage);
         alert("Falha ao atualizar o cliente");
     }
 });

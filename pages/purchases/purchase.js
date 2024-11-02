@@ -6,10 +6,13 @@ document.getElementById('purchaseForm').addEventListener('submit', async functio
     const client_name = document.getElementById('purchaseClient').value;
     const flower_name = document.getElementById('purchaseFlower').value;
 
+    const token = localStorage.getItem("token");
+
     const res = await fetch('http://localhost:5000/api/purchases', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ payment_method, price, client_name, flower_name })
     });
@@ -50,13 +53,18 @@ async function loadAllPurchases() {
 }
 
 async function deletePurchase(purchaseName) {
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/purchases/${purchaseName}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     if (res.ok) {
         alert("Purchase deleted successfully");
-        loadAllPurchases();  // Recarrega a lista de flores
+        loadAllPurchases();  // Recarrega a lista de compras
     } else {
         alert("Failed to delete purchases");
     }

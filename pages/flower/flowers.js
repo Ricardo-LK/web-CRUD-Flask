@@ -5,12 +5,14 @@ document.getElementById('flowerForm').addEventListener('submit', async function 
     const sci_name = document.getElementById('sciName').value;
     const family = document.getElementById('flowerFamilyName').value;
 
+    const token = localStorage.getItem("token");
     
     // Add Flower using the API
     const res = await fetch('http://localhost:5000/api/flowers', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ name, sci_name, family })
     });
@@ -57,8 +59,13 @@ async function loadAllFlowers() {
 }
 
 async function deleteFlower(flowerName) {
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/flowers/${flowerName}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     if (res.ok) {

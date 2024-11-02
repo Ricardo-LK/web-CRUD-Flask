@@ -5,10 +5,13 @@ document.getElementById('clientForm').addEventListener('submit', async function(
     const email = document.getElementById('clientEmail').value;
 
     // Add Client using the API
-    const res = await fetch('http://localhost:5000/api/clients', {
-        method: 'POST',
+    const token = localStorage.getItem("token"); 
+
+    const res = await fetch("http://localhost:5000/api/clients", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ name, email })
     });
@@ -23,17 +26,22 @@ document.getElementById('clientForm').addEventListener('submit', async function(
 
 
 async function deleteClient(clientId) {
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/clients/${clientId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     if (res.ok) {
         alert("Cliente deletado com sucesso");
+        loadAllClients();
     } else {
         alert("Falha ao deletar cliente");
     }
 }
-
 
 async function loadAllClients() {
     const res = await fetch('http://localhost:5000/api/clients');

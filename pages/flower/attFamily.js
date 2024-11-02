@@ -11,10 +11,13 @@ document.getElementById('attFamilyForm').addEventListener('submit', async functi
         return;
     }
 
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/families/${familyId}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ familyName })
     });

@@ -1,11 +1,17 @@
-from flask import Flask, jsonify, request
+from models import Usuario
+from functools import wraps
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
+from flask import Flask, jsonify, request
+import time
+import jwt
 import crud
 import models
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'tde3_arquitetura_bd'
 
 # Enable CORS for all routes
 CORS(app)
@@ -17,6 +23,68 @@ session = Session()
 
 models.Base.metadata.create_all(bind=db)
 
+# Funções de autenticação
+
+def generate_token(user_id):
+    current_time = int(time.time())
+    exp = current_time + 3600
+    token = jwt.encode({'user_id': user_id, 'exp': exp}, app.config['SECRET_KEY'], algorithm='HS256')
+    return token
+
+def token_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({"message": "Token não registrado"}), 403
+
+        try:
+            # Expect token in format 'Bearer <token>'
+            token = token.split(" ")[1]
+            decoded = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            request.user_id = decoded['user_id']
+        except IndexError:
+            return jsonify({"message": "Token não registrado"}), 403
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token expirou"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Token invalido"}), 401
+
+        return func(*args, **kwargs)
+    
+    return wrapper
+
+
+# Register
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.json
+    name = data['name']
+    password = data['pass']
+
+    if session.query(Usuario).filter_by(name=name).first():
+        return jsonify({"message": "Usuário já existe"}), 400
+
+    pass_hash = generate_password_hash(password)
+    crud.create_user(session=session, name=name, password=pass_hash)
+
+    return jsonify({"message": "Registrado com sucesso!"}), 201
+
+
+# Login
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    name = data['name']
+    password = data['pass']
+
+    user = session.query(Usuario).filter_by(name=name).first()
+    if user and check_password_hash(user.password, password):
+        token = generate_token(user_id=user.id)
+        return jsonify({"token": token}), 200
+    else:
+        return jsonify({"message": "Credenciais inválidas"}), 401
+
 # CRUD API Client endpoints
 @app.route('/api/clients', methods=['GET'])
 def get_all_clients():
@@ -25,6 +93,7 @@ def get_all_clients():
 
 
 @app.route('/api/clients', methods=['POST'])
+@token_required
 def create_client():
     data = request.json
     crud.create_client(session, data['name'], data['email'])
@@ -32,12 +101,14 @@ def create_client():
 
 
 @app.route('/api/clients/<int:id>', methods=['DELETE'])
+@token_required
 def delete_client(id):
     crud.delete_client_by_id(session, id)
     return jsonify({"message": "Cliente deletado com sucesso"}), 200
 
 
 @app.route('/api/clients/<int:id>', methods=['PUT'])
+@token_required
 def update_client(id):
     data = request.json
     client = crud.get_client_by_id(session, id)
@@ -56,6 +127,7 @@ def get_family():
 
 
 @app.route('/api/families', methods=['POST'])
+@token_required
 def create_family():
     data = request.json
     crud.create_family(session, data['name'])
@@ -63,12 +135,14 @@ def create_family():
 
 
 @app.route('/api/families/<string:name>', methods=['DELETE'])
+@token_required
 def delete_family(name):
     crud.delete_family(session, name)
     return jsonify({"message": "Familia apagada com sucesso"}), 200
 
 
 @app.route('/api/families/<int:id>', methods=['PUT'])
+@token_required
 def update_family(id):
     data = request.json
     family = crud.get_family_by_id(session, id)
@@ -93,6 +167,7 @@ def get_all_flowers():
     )
     
 @app.route('/api/flowers', methods=['POST'])
+@token_required
 def create_flower():
     data = request.json
     family = crud.get_family(session, data.get('family'))
@@ -106,12 +181,14 @@ def create_flower():
 
 
 @app.route('/api/flowers/<int:id>', methods=['DELETE'])
+@token_required
 def delete_flower(id):
     crud.delete_flower_by_id(session, id)
     return jsonify({"message": "Flor deletada com sucesso"}), 200
 
 
 @app.route('/api/flowers/<int:id>', methods=['PUT'])
+@token_required
 def update_flower(id):
     data = request.json
     flower = crud.get_flower_by_id(session, id)
@@ -137,6 +214,7 @@ def get_all_purchases():
 
     
 @app.route('/api/purchases', methods=['POST'])
+@token_required
 def create_purchase():
     data = request.json
     crud.create_purchase(session, data['payment_method'], data['price'], data['client_name'], data['flower_name'])
@@ -145,12 +223,14 @@ def create_purchase():
 
 
 @app.route('/api/purchases/<int:id>', methods=['DELETE'])
+@token_required
 def delete_purchase(id):
     crud.delete_purchase(session, id)
     return jsonify({"message": "Compra deletada com sucesso"}), 200
 
 
 @app.route('/api/purchases/<int:id>', methods=['PUT'])
+@token_required
 def update_purchase(id):
     data = request.json
     purchase = crud.get_purchase(session, id)

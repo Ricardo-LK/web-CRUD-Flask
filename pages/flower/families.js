@@ -3,11 +3,14 @@ document.getElementById('familyForm').addEventListener('submit', async function 
 
     const name = document.getElementById('familyName').value;
     
+    const token = localStorage.getItem("token");
+    
     // Add Family using the API
     const res = await fetch('http://localhost:5000/api/families', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ name })
     });
@@ -53,8 +56,13 @@ async function loadAllFamilies() {
 
 // Função para deletar uma família
 async function deleteFamily(familyName) {
+    const token = localStorage.getItem("token");
+
     const res = await fetch(`http://localhost:5000/api/families/${familyName}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     if (res.ok) {
