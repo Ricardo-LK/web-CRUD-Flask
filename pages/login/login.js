@@ -14,6 +14,7 @@ document.getElementById("loginForm").onsubmit = async (e) => {
     const data = await res.json();
     if (res.ok) {
         localStorage.setItem("token", data.token);
+        document.location = "../../index.html";
         alert("Login bem-sucedido!");
     } else {
         alert(data.message);

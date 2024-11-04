@@ -23,8 +23,8 @@ document.getElementById('attFamilyForm').addEventListener('submit', async functi
     });
 
     if (res.ok) {
-        alert("Familia atualizado com sucesso");
         document.location = "flowers.html";
+        alert("Familia atualizado com sucesso");
     } else {
         console.error("Update failed:", errorMessage);
         alert("Falha ao atualizar o familia");

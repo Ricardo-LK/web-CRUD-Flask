@@ -14,6 +14,10 @@ def get_client_by_id(session: Session, id):
     client = session.query(Cliente).filter_by(id=id).first()
     return client
 
+def get_all_clients_sorted_by_name(session: Session):
+    clients = session.query(Cliente).order_by(Cliente.name.asc()).all()
+    return clients
+
 
 def get_all_families(session: Session):
     families = session.query(Familia).all()
@@ -42,9 +46,12 @@ def get_flower_by_id(session: Session, id):
     flower = session.query(Flor).filter_by(id=id).first()
     return flower
 
-
 def get_all_purchases(session: Session):
     purchase = session.query(Compra).all()
+    return purchase
+
+def get_all_purchases_sorted_by_price(session: Session):
+    purchase = session.query(Compra).order_by(Compra.price.desc()).all()
     return purchase
 
 def get_purchase(session: Session, id):

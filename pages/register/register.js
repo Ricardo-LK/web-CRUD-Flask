@@ -13,5 +13,6 @@ document.getElementById("registerForm").onsubmit = async (e) => {
     });
 
     const data = await res.json();
+    document.location = "../../index.html";
     alert(data.message);
 }

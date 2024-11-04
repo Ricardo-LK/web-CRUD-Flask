@@ -24,8 +24,8 @@ document.getElementById('attClientForm').addEventListener('submit', async functi
     });
 
     if (res.ok) {
+        document.location = "./client.html";
         alert("Cliente atualizado com sucesso");
-        document.location = "clients.html";
     } else {
         alert("Falha ao atualizar o cliente");
     }

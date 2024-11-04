@@ -26,8 +26,8 @@ document.getElementById('attFlowerForm').addEventListener('submit', async functi
     });
 
     if (res.ok) {
+        document.location = "./flowers.html";
         alert("Flor atualizado com sucesso");
-        document.location = "flowers.html";
     } else {
         alert("Falha ao atualizar o flor");
     }

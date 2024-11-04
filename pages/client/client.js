@@ -18,12 +18,11 @@ document.getElementById('clientForm').addEventListener('submit', async function(
 
     if (res.ok) {
         alert('Cliente adicionado com sucesso');
-        loadAllClients();
+        loadAllClients(ordered);
     } else {
         alert('Falha ao adicionar o cliente');
     }
 });
-
 
 async function deleteClient(clientId) {
     const token = localStorage.getItem("token");
@@ -37,14 +36,17 @@ async function deleteClient(clientId) {
 
     if (res.ok) {
         alert("Cliente deletado com sucesso");
-        loadAllClients();
+        loadAllClients("false"); 
     } else {
         alert("Falha ao deletar cliente");
     }
 }
 
-async function loadAllClients() {
-    const res = await fetch('http://localhost:5000/api/clients');
+async function loadAllClients(sorted) {
+
+    const url = sorted == false ? 'http://localhost:5000/api/clients' : 'http://localhost:5000/api/clients/sorted';
+
+    const res = await fetch(url);
     const clients = await res.json();
 
     const clientList = document.getElementById('clientList');
@@ -76,5 +78,5 @@ async function loadAllClients() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    loadAllClients();
+    loadAllClients(false);
 });

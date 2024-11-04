@@ -92,6 +92,12 @@ def get_all_clients():
     return jsonify([{"id": client.id, "name": client.name, "email": client.email} for client in clients])
 
 
+@app.route('/api/clients/sorted', methods=['GET'])
+def get_sorted_clients():
+    clients = crud.get_all_clients_sorted_by_name(session)
+    return jsonify([{"id": client.id, "name": client.name, "email": client.email} for client in clients])
+
+
 @app.route('/api/clients', methods=['POST'])
 @token_required
 def create_client():
@@ -205,8 +211,21 @@ def get_all_purchases():
     purchases = crud.get_all_purchases(session)
     return jsonify(
         [{
-            "client": purchase.client.name,
-            "flower": purchase.flower.name,
+            "client": purchase.client.name if purchase.client else "Unknown",
+            "flower": purchase.flower.name if purchase.flower else "Unknown", 
+            "id": purchase.id, 
+            "payment_method": purchase.payment_method, 
+            "price": purchase.price, 
+        } for purchase in purchases])
+
+
+@app.route('/api/purchases/sorted', methods=['GET'])
+def get_sorted_purchases():
+    purchases = crud.get_all_purchases_sorted_by_price(session)
+    return jsonify(
+        [{
+            "client": purchase.client.name if purchase.client else "Unknown",
+            "flower": purchase.flower.name if purchase.flower else "Unknown", 
             "id": purchase.id, 
             "payment_method": purchase.payment_method, 
             "price": purchase.price, 

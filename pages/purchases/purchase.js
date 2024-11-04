@@ -21,14 +21,18 @@ document.getElementById('purchaseForm').addEventListener('submit', async functio
 
     if (res.ok) {
         alert('Purchase added successfully');
-        loadAllPurchases();
+        loadAllPurchases(false);
     } else {
         alert(`Failed to add purchase: ${result.message}`);
     }
 });
 
-async function loadAllPurchases() {
-    const res = await fetch('http://localhost:5000/api/purchases');
+
+async function loadAllPurchases(sorted) {
+
+    const url = sorted == false ? 'http://localhost:5000/api/purchases' : 'http://localhost:5000/api/purchases/sorted';
+
+    const res = await fetch(url);
     const purchases = await res.json();
 
     const purchaseList = document.getElementById('purchaseList');
@@ -42,7 +46,7 @@ async function loadAllPurchases() {
 
         const btn = document.createElement('button')
         btn.addEventListener("click", (e) => {
-            deleteFlower(purchase.id)
+            deletePurchase(purchase.id)
         })
 
         div.appendChild(li);
@@ -51,6 +55,7 @@ async function loadAllPurchases() {
         purchaseList.appendChild(div);
     });
 }
+
 
 async function deletePurchase(purchaseName) {
     const token = localStorage.getItem("token");
@@ -64,12 +69,12 @@ async function deletePurchase(purchaseName) {
 
     if (res.ok) {
         alert("Purchase deleted successfully");
-        loadAllPurchases();  // Recarrega a lista de compras
+        loadAllPurchases(false);  // Recarrega a lista de compras
     } else {
         alert("Failed to delete purchases");
     }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    loadAllPurchases();
+    loadAllPurchases(false);
 });

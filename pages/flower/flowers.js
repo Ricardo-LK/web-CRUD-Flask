@@ -25,6 +25,26 @@ document.getElementById('flowerForm').addEventListener('submit', async function 
     }
 })
 
+
+async function deleteFlower(flowerName) {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`http://localhost:5000/api/flowers/${flowerName}`, {
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (res.ok) {
+        alert("Flower deleted successfully");
+        loadAllFlowers();  // Recarrega a lista de flores
+    } else {
+        alert("Failed to delete flowers");
+    }
+}
+
+
 async function loadAllFlowers() {
     const res = await fetch('http://localhost:5000/api/flowers');
     const flowers = await res.json();
@@ -58,23 +78,6 @@ async function loadAllFlowers() {
     });
 }
 
-async function deleteFlower(flowerName) {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(`http://localhost:5000/api/flowers/${flowerName}`, {
-        method: 'DELETE',
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    if (res.ok) {
-        alert("Flower deleted successfully");
-        loadAllFlowers();  // Recarrega a lista de flores
-    } else {
-        alert("Failed to delete flowers");
-    }
-}
 
 
 document.addEventListener('DOMContentLoaded', function () {
